@@ -1,0 +1,109 @@
+{% extends 'wardrobe/base.html' %}
+{% block content %}
+<h2 class="text-xl md:text-2xl font-semibold mb-4">Outfit Selection</h2>
+
+<div class="space-y-6">
+    {% for category, label in sections %}
+    <div>
+        <h3 class="font-bold mb-2">{{ label }}</h3>
+        <div class="relative w-36 h-36 mx-auto">
+            <button type="button" onclick="changeItem('{{ category }}', -1)"
+                class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white px-2 py-1 shadow rounded">←</button>
+
+            <img id="{{ category }}-img"
+                src=""
+                data-id=""
+                class="w-36 h-36 object-cover mx-auto rounded shadow"
+                alt="{{ label }}">
+
+            <button type="button" onclick="changeItem('{{ category }}', 1)"
+                class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white px-2 py-1 shadow rounded">→</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<p class="mt-6">
+    <a href="{% url 'add_item' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        ＋ Add Clothing Item
+    </a>
+</p>
+
+<h3 class="mt-10 font-semibold text-lg">Save Selected Outfit</h3>
+<form method="post" action="{% url 'save_favorite' %}" class="space-y-3 max-w-md">
+    {% csrf_token %}
+    <input type="hidden" name="accessory_id" id="accessory-id">
+    <input type="hidden" name="top_id" id="top-id">
+    <input type="hidden" name="bottom_id" id="bottom-id">
+    <input type="hidden" name="shoes_id" id="shoes-id">
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        💾 Save Outfit
+    </button>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const items = {
+        accessory: [
+            {% for item in items_map.accessory %}
+                { url: "{{ item.image.url }}", id: "{{ item.id }}" }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ],
+        top: [
+            {% for item in items_map.top %}
+                { url: "{{ item.image.url }}", id: "{{ item.id }}" }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ],
+        bottom: [
+            {% for item in items_map.bottom %}
+                { url: "{{ item.image.url }}", id: "{{ item.id }}" }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ],
+        shoes: [
+            {% for item in items_map.shoes %}
+                { url: "{{ item.image.url }}", id: "{{ item.id }}" }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ],
+    };
+
+    const indices = {
+        accessory: 0,
+        top: 0,
+        bottom: 0,
+        shoes: 0
+    };
+
+    function updateHiddenInputs() {
+        for (const category of ['accessory', 'top', 'bottom', 'shoes']) {
+            const hiddenInput = document.getElementById(`${category}-id`);
+            if (hiddenInput && items[category].length > 0) {
+                hiddenInput.value = items[category][indices[category]].id;
+            }
+        }
+    }
+
+    function changeItem(category, delta) {
+        const max = items[category].length;
+        if (max === 0) return;
+        indices[category] = (indices[category] + delta + max) % max;
+        const currentItem = items[category][indices[category]];
+        const imgElement = document.getElementById(`${category}-img`);
+        if (imgElement) {
+            imgElement.src = currentItem.url;
+            imgElement.setAttribute('data-id', currentItem.id);
+        }
+        updateHiddenInputs();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        ['accessory', 'top', 'bottom', 'shoes'].forEach(cat => {
+            if (items[cat].length > 0) {
+                document.getElementById(`${cat}-img`).src = items[cat][0].url;
+                document.getElementById(`${cat}-img`).setAttribute('data-id', items[cat][0].id);
+            }
+        });
+    });
+
+</script>
+{% endblock %}

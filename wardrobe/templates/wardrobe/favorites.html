@@ -1,0 +1,61 @@
+{% extends 'wardrobe/base.html' %}
+{% block content %}
+
+<h2 class="text-xl font-bold mb-6">My Favorites</h2>
+
+{% if outfits %}
+    <div class="grid md:grid-cols-2 gap-6">
+        {% for outfit in outfits %}
+            <!-- Card -->
+            <div class="border p-5 rounded shadow bg-white transition-transform transform hover:scale-[1.02] hover:shadow-lg">
+                <!-- Header -->
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">⭐ Favorite #{{ forloop.counter }}</h3>
+
+                    <!-- Delete 按鈕 -->
+                    <form method="post" action="{% url 'delete_favorite' outfit.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-sm">
+                            🗑️ Delete
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Outfit Items -->
+                <div class="flex flex-wrap gap-3 justify-center">
+                    {% if outfit.accessory %}
+                        <div>
+                            <img src="{{ outfit.accessory.image.url }}" class="w-24 h-24 object-cover rounded shadow" alt="Accessory">
+                        </div>
+                    {% endif %}
+                    {% if outfit.top %}
+                        <div>
+                            <img src="{{ outfit.top.image.url }}" class="w-24 h-24 object-cover rounded shadow" alt="Top">
+                        </div>
+                    {% endif %}
+                    {% if outfit.bottom %}
+                        <div>
+                            <img src="{{ outfit.bottom.image.url }}" class="w-24 h-24 object-cover rounded shadow" alt="Bottom">
+                        </div>
+                    {% endif %}
+                    {% if outfit.shoes %}
+                        <div>
+                            <img src="{{ outfit.shoes.image.url }}" class="w-24 h-24 object-cover rounded shadow" alt="Shoes">
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="text-gray-600">No saved outfits yet.</p>
+{% endif %}
+
+<!-- Back 按鈕 -->
+<p class="mt-8">
+    <a href="{% url 'outfit_selector' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
+        ← Back to Outfit Selector
+    </a>
+</p>
+
+{% endblock %}

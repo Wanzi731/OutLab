@@ -1,0 +1,70 @@
+{% extends 'wardrobe/base.html' %}
+{% block content %}
+
+<h2 class="text-xl font-bold mb-6">Community Posts</h2>
+
+<!-- Create Post button -->
+<a href="{% url 'create_post' %}" class="inline-block mb-6 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+    ＋ Create New Post
+</a>
+
+<!-- Posts -->
+<div class="space-y-6">
+    {% for post in posts %}
+        <div class="border rounded shadow bg-white hover:shadow-lg transition-transform transform hover:scale-[1.02]">
+
+            <!-- Post header -->
+            <div class="bg-gray-100 px-4 py-2 flex justify-between items-center rounded-t">
+                <div class="text-sm text-gray-700">
+                    👤 <strong>{{ post.user.username }}</strong> 
+                    · <span class="text-gray-500 text-xs">{{ post.created_at|date:"Y-m-d H:i" }}</span>
+                </div>
+            </div>
+
+            <!-- Post content -->
+            <div class="p-4 space-y-3">
+                {% if post.content %}
+                    <p class="text-gray-800">{{ post.content }}</p>
+                {% endif %}
+
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="Post Image" class="w-full max-w-md rounded mx-auto mt-2">
+                {% endif %}
+
+                <!-- Buttons -->
+                <div class="flex space-x-2 mt-4">
+                    <!-- Like button -->
+                    <form method="post" action="{% url 'like_post' post.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-sm">
+                            ❤️ Like ({{ post.like_set.count }})
+                        </button>
+                    </form>
+
+                    <!-- Comment button -->
+                    <form method="post" action="{% url 'comment_post' post.id %}" class="flex items-center space-x-1">
+                        {% csrf_token %}
+                        <input type="text" name="content" placeholder="Comment..." class="border rounded px-2 py-1 text-sm w-40">
+                        <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-sm">
+                            💬 Comment
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Comments -->
+                {% if post.comment_set.exists %}
+                    <div class="mt-4 space-y-1">
+                        {% for comment in post.comment_set.all %}
+                            <div class="text-sm text-gray-700 bg-gray-100 px-2 py-1 rounded">
+                                <strong>{{ comment.user.username }}</strong>: {{ comment.content }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

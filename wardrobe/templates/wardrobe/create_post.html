@@ -1,0 +1,29 @@
+{% extends 'wardrobe/base.html' %}
+
+{% block content %}
+<h2 class="text-xl md:text-2xl font-semibold mb-4">Create New Post</h2>
+
+<form method="post" enctype="multipart/form-data" class="space-y-4 max-w-lg">
+    {% csrf_token %}
+
+    <div>
+        <label class="block font-semibold mb-1">Content</label>
+        {{ form.content.errors }}
+        {{ form.content }}
+    </div>
+
+    <div>
+        <label class="block font-semibold mb-1">Image</label>
+        {{ form.image.errors }}
+        {{ form.image }}
+    </div>
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        🚀 Post
+    </button>
+</form>
+
+<p class="mt-4">
+    <a href="{% url 'designer_posts' %}" class="text-blue-600 hover:underline">← Back to Community Posts</a>
+</p>
+{% endblock %}

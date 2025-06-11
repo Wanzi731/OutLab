@@ -1,0 +1,51 @@
+{% extends 'wardrobe/base.html' %}
+{% block content %}
+
+<h2 class="text-xl font-bold mb-6">Add New Clothes Items</h2>
+
+<form method="post" enctype="multipart/form-data" class="space-y-5 max-w-md">
+    {% csrf_token %}
+
+    <!-- Name -->
+    <div>
+        <label class="block font-semibold mb-1">Name:</label>
+        {{ form.name }}
+    </div>
+
+    <!-- Category -->
+    <div>
+        <label class="block font-semibold mb-1">Category:</label>
+        {{ form.category }}
+    </div>
+
+    <!-- Brand -->
+    <div>
+        <label class="block font-semibold mb-1">Brand:</label>
+        {{ form.brand }}
+    </div>
+
+    <!-- Size -->
+    <div>
+        <label class="block font-semibold mb-1">Size:</label>
+        {{ form.size }}
+    </div>
+
+    <!-- Image -->
+    <div>
+        <label class="block font-semibold mb-1">Image:</label>
+        {{ form.image }}
+    </div>
+
+    <!-- Upload button -->
+    <div class="flex space-x-4 mt-6">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            📤 Upload
+        </button>
+
+        <a href="{% url 'outfit_selector' %}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 inline-block">
+            ← Back to Select
+        </a>
+    </div>
+</form>
+
+{% endblock %}

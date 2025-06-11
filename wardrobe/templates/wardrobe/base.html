@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Outfit Selector Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Input 欄位 */
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="file"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 0.375rem; /* rounded */
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="email"]:focus,
+        input[type="file"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #3b82f6; /* blue */
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+            outline: none;
+        }
+
+        /* Button 按鈕基礎樣式 */
+        button {
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* Alert 紅色錯誤訊息 */
+        .alert-error {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        /* Label spacing */
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        /* Form spacing 統一 */
+        form > div {
+            margin-bottom: 1rem;
+        }
+    </style>
+
+
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white shadow p-4">
+        <div class="container mx-auto flex flex-col md:flex-row md:items-center md:justify-between">
+            <h1 class="text-2xl font-bold mb-2 md:mb-0">👗 OutfitLab</h1>
+            <nav class="flex space-x-3 items-center">
+                {% if user.is_authenticated %}
+                    <span class="flex items-center text-gray-700 mr-3">👤 {{ user.username }}</span>
+
+                    <a href="{% url 'outfit_selector' %}" class="px-3 py-1 rounded hover:bg-blue-100 text-blue-700 font-medium transition">Outfit Selection</a>
+                    <a href="{% url 'favorites' %}" class="px-3 py-1 rounded hover:bg-blue-100 text-blue-700 font-medium transition">My Favorites</a>
+                    <a href="{% url 'designer_posts' %}" class="px-3 py-1 rounded hover:bg-blue-100 text-blue-700 font-medium transition">Community Posts</a>
+                    <a href="{% url 'manage_items' %}" class="px-3 py-1 rounded hover:bg-blue-100 text-blue-700 font-medium transition">Manage Items</a>
+
+                    <form method="post" action="{% url 'logout' %}" class="inline-block">
+                        {% csrf_token %}
+                        <button type="submit" class="text-red-600 hover:underline">Logout</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 font-medium">Login</a>
+                    <a href="{% url 'register' %}" class="px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 font-medium ml-2">Register</a>
+                {% endif %}
+            </nav>
+
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="container mx-auto flex-1 p-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 text-center text-sm p-4">
+        © 2025 Outfit Selector. All rights reserved.
+    </footer>
+
+    <!-- Optional extra js -->
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>
